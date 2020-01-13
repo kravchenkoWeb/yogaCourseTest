@@ -37,7 +37,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
     // Timer 
 
-    let deadline = '2018-11-21';
+    let deadline = '2020-11-21';
 
     let getTimeRemaining = (endtime) => {
         let t = Date.parse(endtime) - Date.parse(new Date()),
@@ -101,6 +101,75 @@ window.addEventListener('DOMContentLoaded', function() {
         overlay.style.display = 'none';
         more.classList.remove('more-splash');
         document.body.style.overflow = '';
+    });
+
+    //Form
+    let loading = {
+        message: 'Загрузка...',
+        success: 'Спасибо!Скоро мы с Вами свяжемся!',
+        failure: 'Что то пошло не так'
+    };
+
+    let form = document.querySelector(".main-form"),
+        input = document.getElementsByTagName("input"),
+        statusMessage = document.createElement("div");
+
+        statusMessage.classList.add("status");
+
+    form.addEventListener("submit", function(event) {
+        event.preventDefault();
+        form.appendChild(statusMessage);
+
+        let request = new XMLHttpRequest();
+        request.open("POST", 'server.php');
+        request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        let formData = new FormData(form);
+        request.send(formData);
+
+        request.addEventListener("readystatechange", function() {
+            if(request.readyState < 4) {
+                statusMessage.innerHTML = loading.message;
+            } else if (request.readyState === 4 && request.status == 200) {
+                statusMessage.innerHTML = loading.success;
+            } else {
+                statusMessage.innerHTML = loading.failure;
+            }
+        });
+
+        for(let i = 0; i < input.length; i++) {
+            input[i].value = "";
+        }
+    });
+
+    //Contact Form
+
+    let formContact = document.getElementById("form");
+
+    formContact.addEventListener("submit", function() {
+        event.preventDefault();
+        formContact.appendChild(statusMessage);
+
+        let req = new XMLHttpRequest();
+        req.open("POST", 'server.php');
+        req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        let data = new FormData(formContact);
+        req.send(data);
+
+        req.addEventListener("readystatechange", function() {
+            if(req.readyState < 4) {
+                statusMessage.innerHTML = loading.message;
+            } else if (req.readyState === 4 && req.status == 200) {
+                statusMessage.innerHTML = loading.success;
+            } else {
+                statusMessage.innerHTML = loading.failure;
+            }
+        });
+
+        for(let i = 0; i < input.length; i++) {
+            input[i].value = "";
+        }
     });
 
 });
